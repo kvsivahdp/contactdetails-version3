@@ -22,13 +22,10 @@ import com.contact.detail.services.CompanyService;
  * {@link CompanyService}.
  *
  */
-/*
- * @CrossOrigin(origins = "*", allowedHeaders = "*")
- * 
- * @RestController
- * 
- * @RequestMapping("/api/v1")
- */
+
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
+@RequestMapping("/api/v1")
 public class CompanyController {
 
 	@Autowired

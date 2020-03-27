@@ -21,13 +21,10 @@ import com.contact.detail.services.PersonService;
  * A RESTFul controller for accessing Person information via
  * {@link PersonService}.
  */
-/*
- * @CrossOrigin(origins = "*", allowedHeaders = "*")
- * 
- * @RestController
- * 
- * @RequestMapping("/api/v1")
- */
+
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
+@RequestMapping("/api/v1")
 public class PersonController {
 
 	@Autowired
