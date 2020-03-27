@@ -2,6 +2,7 @@ package com.contact.detail.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.contact.detail.dto.CompanyDTO;
 import com.contact.detail.dto.PersonDTO;
 import com.contact.detail.dto.SupplierDTO;
+import com.contact.detail.dto.SupplierDTOList;
 import com.contact.detail.entity.Company;
 import com.contact.detail.entity.Person;
 import com.contact.detail.entity.Supplier;
@@ -183,12 +185,12 @@ public class SupplierService {
 	}
 	
 	
-	public List<SupplierDTO> findAllSuppliers(){
-		List<SupplierDTO> supplierDTOList = new ArrayList<SupplierDTO>();
+	public List<SupplierDTOList> findAllSuppliers(){
+		List<SupplierDTOList> suppliers = new ArrayList<SupplierDTOList>();
 		try {
 			List<Supplier> supplierList = supplierRepository.findAll();
 			supplierList.stream().forEach(x->{
-				SupplierDTO supplierDTO = new SupplierDTO();
+				SupplierDTOList supplierDTO = new SupplierDTOList();
 				PersonDTO personDTO = new PersonDTO();
 				CompanyDTO companyDTO = new CompanyDTO();
 				supplierDTO.setOrderLeadTime(x.getOrderLeadTime());
@@ -196,6 +198,40 @@ public class SupplierService {
 				supplierDTO.setPhoneNumber(x.getPhoneNumber());
 				Company company = this.companyService.findBySupplierId(x.getId());
 				Person person = this.personService.findBySupplierId(x.getId());
+				if(company!=null) {
+					companyDTO.setCompanyName(company.getCompanyName());
+					companyDTO.setRegNum(company.getRegNum());
+					companyDTO.setId(company.getId());
+					supplierDTO.getCompanyList().add(companyDTO);
+				}
+				if(person!=null) {
+					personDTO.setFirstName(person.getFirstName());
+					personDTO.setLastName(person.getLastName());
+					personDTO.setId(person.getId());
+					supplierDTO.getPersonList().add(personDTO);
+				}
+				suppliers.add(supplierDTO);
+			});
+			return suppliers;
+		}catch(Exception e) {
+			throw e;
+		}
+	}
+	
+	public SupplierDTO findSupplierBySupplierId(Long supplierId){
+		SupplierDTO supplierDTO = new SupplierDTO();
+		try {
+			Optional<Supplier> isSupplierFound = supplierRepository.findById(supplierId);
+			if(isSupplierFound.isPresent()) {
+				Supplier supplier = isSupplierFound.get();
+				
+				PersonDTO personDTO = new PersonDTO();
+				CompanyDTO companyDTO = new CompanyDTO();
+				supplierDTO.setOrderLeadTime(supplier.getOrderLeadTime());
+				supplierDTO.setTaxNum(supplier.getTaxNum());
+				supplierDTO.setPhoneNumber(supplier.getPhoneNumber());
+				Company company = this.companyService.findBySupplierId(supplier.getId());
+				Person person = this.personService.findBySupplierId(supplier.getId());
 				if(company!=null) {
 					companyDTO.setCompanyName(company.getCompanyName());
 					companyDTO.setRegNum(company.getRegNum());
@@ -208,9 +244,9 @@ public class SupplierService {
 					personDTO.setId(person.getId());
 					supplierDTO.setPerson(personDTO);
 				}
-				supplierDTOList.add(supplierDTO);
-			});
-			return supplierDTOList;
+			
+			}
+			return supplierDTO;
 		}catch(Exception e) {
 			throw e;
 		}

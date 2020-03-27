@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.contact.detail.dto.CustomerDTO;
 import com.contact.detail.dto.SupplierDTO;
+import com.contact.detail.dto.SupplierDTOList;
 import com.contact.detail.services.SupplierService;
 
 /**
@@ -60,8 +61,8 @@ public class SupplierController {
 	}
 
 	@GetMapping("/suppliers/")
-	public ResponseEntity<ResponseData<List<SupplierDTO>>> suppliers() throws Exception {
-		ResponseData<List<SupplierDTO>> appResponse = new ResponseData<>();
+	public ResponseEntity<ResponseData<List<SupplierDTOList>>> suppliers() throws Exception {
+		ResponseData<List<SupplierDTOList>> appResponse = new ResponseData<>();
 		try {
 			appResponse.setPayload(supplierService.findAllSuppliers());
 			return ResponseEntity.ok().body(appResponse);
@@ -69,5 +70,14 @@ public class SupplierController {
 			throw e;
 		}
 	}
-	
+	@GetMapping("/suppliers/{supplierId}")
+	public ResponseEntity<ResponseData<SupplierDTO>> customers(@PathVariable Long supplierId) throws Exception {
+		ResponseData<SupplierDTO> appResponse = new ResponseData<>();
+		try {
+			appResponse.setPayload(supplierService.findSupplierBySupplierId(supplierId));
+			return ResponseEntity.ok().body(appResponse);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
 }

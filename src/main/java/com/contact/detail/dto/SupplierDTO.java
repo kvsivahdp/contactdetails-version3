@@ -1,15 +1,6 @@
 package com.contact.detail.dto;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-
 import com.contact.detail.entity.PhoneNumber;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import io.swagger.annotations.ApiModelProperty;
 
 public class SupplierDTO {
 	
@@ -19,6 +10,7 @@ public class SupplierDTO {
 	private PersonDTO person;
 	private CompanyDTO company;
 	private PhoneNumber phoneNumber;
+	
 	/**
 	 * 
 	 */

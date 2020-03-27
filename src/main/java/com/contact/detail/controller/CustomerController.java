@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.contact.detail.dto.CustomerDTO;
-import com.contact.detail.entity.Customer;
-import com.contact.detail.repository.CustomerRepository;
+import com.contact.detail.dto.CustomerDTOList;
 import com.contact.detail.services.CustomerService;
 
 /**
@@ -61,10 +60,20 @@ public class CustomerController {
 	}
 
 	@GetMapping("/customers/")
-	public ResponseEntity<ResponseData<List<CustomerDTO>>> customers() throws Exception {
-		ResponseData<List<CustomerDTO>> appResponse = new ResponseData<>();
+	public ResponseEntity<ResponseData<List<CustomerDTOList>>> customers() throws Exception {
+		ResponseData<List<CustomerDTOList>> appResponse = new ResponseData<>();
 		try {
 			appResponse.setPayload(customerService.findAllCustomers());
+			return ResponseEntity.ok().body(appResponse);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	@GetMapping("/customers/{customerId}")
+	public ResponseEntity<ResponseData<CustomerDTO>> customers(@PathVariable Long customerId) throws Exception {
+		ResponseData<CustomerDTO> appResponse = new ResponseData<>();
+		try {
+			appResponse.setPayload(customerService.findCustomerByCustomerId(customerId));
 			return ResponseEntity.ok().body(appResponse);
 		} catch (Exception e) {
 			throw e;

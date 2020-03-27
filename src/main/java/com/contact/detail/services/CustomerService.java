@@ -2,18 +2,23 @@ package com.contact.detail.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.contact.detail.dto.CompanyDTO;
 import com.contact.detail.dto.CustomerDTO;
+import com.contact.detail.dto.CustomerDTOList;
 import com.contact.detail.dto.PersonDTO;
+import com.contact.detail.dto.SupplierDTO;
+import com.contact.detail.dto.SupplierDTOList;
 import com.contact.detail.entity.Company;
 import com.contact.detail.entity.Customer;
 import com.contact.detail.entity.CustomerCompany;
 import com.contact.detail.entity.CustomerPerson;
 import com.contact.detail.entity.Person;
+import com.contact.detail.entity.Supplier;
 import com.contact.detail.repository.CustomerRepository;
 
 @Service
@@ -182,12 +187,12 @@ public class CustomerService {
 	}
 	
 	
-	public List<CustomerDTO> findAllCustomers(){
-		List<CustomerDTO> customerDTOList = new ArrayList<CustomerDTO>();
+	public List<CustomerDTOList> findAllCustomers(){
+		List<CustomerDTOList> customers = new ArrayList<>();
 		try {
 			List<Customer> customerList = customerRepository.findAll();
 			customerList.stream().forEach(x->{
-				CustomerDTO customerDTO = new CustomerDTO();
+				CustomerDTOList customerDTO = new CustomerDTOList();
 				PersonDTO personDTO = new PersonDTO();
 				CompanyDTO companyDTO = new CompanyDTO();
 				customerDTO.setCustNum(x.getCustNum());
@@ -199,17 +204,51 @@ public class CustomerService {
 					companyDTO.setCompanyName(company.getCompanyName());
 					companyDTO.setRegNum(company.getRegNum());
 					companyDTO.setId(company.getId());
-					customerDTO.setCompany(companyDTO);
+					//customerDTO.setCompany(companyDTO);
+					customerDTO.getCompanyList().add(companyDTO);
 				}
 				if(person!=null) {
 					personDTO.setFirstName(person.getFirstName());
 					personDTO.setLastName(person.getLastName());
 					personDTO.setId(person.getId());
-					customerDTO.setPerson(personDTO);
+					customerDTO.getPersonList().add(personDTO);
+					
 				}
-				customerDTOList.add(customerDTO);
+				customers.add(customerDTO);
 			});
-			return customerDTOList;
+			return customers;
+		}catch(Exception e) {
+			throw e;
+		}
+	}
+	
+	public CustomerDTO findCustomerByCustomerId(Long customerId){
+		CustomerDTO customerDTO = new CustomerDTO();
+		try {
+			Optional<Customer> isCustomerFound = customerRepository.findById(customerId);
+			if(isCustomerFound.isPresent()) {
+				Customer customer = isCustomerFound.get();
+				
+				PersonDTO personDTO = new PersonDTO();
+				CompanyDTO companyDTO = new CompanyDTO();
+				customerDTO.setCustNum(customer.getCustNum());
+				customerDTO.setLastOrderDate(customer.getLastOrderDate());
+				customerDTO.setPhoneNumber(customer.getPhoneNumber());
+				Company company = this.companyService.findByCustomerId(customer.getId());
+				Person person = this.personService.findByCustomerId(customer.getId());
+				if(company!=null) {
+					companyDTO.setCompanyName(company.getCompanyName());
+					companyDTO.setRegNum(company.getRegNum());
+					companyDTO.setId(company.getId());
+				}
+				if(person!=null) {
+					personDTO.setFirstName(person.getFirstName());
+					personDTO.setLastName(person.getLastName());
+					personDTO.setId(person.getId());
+				}
+			
+			}
+			return customerDTO;
 		}catch(Exception e) {
 			throw e;
 		}
